@@ -1,0 +1,38 @@
+name: Issue Handler
+
+on:
+  issues:
+    types: [opened]
+jobs:
+  handle-new-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display Issue Details
+        run: |
+          echo "=== NEW ISSUE CREATED ==="
+          echo "Issue Number: ${{ github.event.issue.number }}"
+          echo "Issue Title: ${{ github.event.issue.title }}"
+          echo "Issue Body: ${{ github.event.issue.body }}"
+          echo "Created By: ${{ github.event.issue.user.login }}"
+          echo "Created At: ${{ github.event.issue.created_at }}"
+          echo "Issue URL: ${{ github.event.issue.html_url }}"
+          echo "State: ${{ github.event.issue.state }}"
+          
+          if [ "${{ github.event.issue.assignee }}" != "null" ]; then
+            echo "Assigned To: ${{ github.event.issue.assignee.login }}"
+          else
+            echo "Assigned To: Not assigned"
+          fi
+          
+          if [ "${{ length(github.event.issue.labels) }}" -gt "0" ]; then
+            echo "Labels:"
+            echo '${{ toJson(github.event.issue.labels) }}' | jq -r '.[].name'
+          else
+            echo "Labels: None"
+          fi
+
+      - name: Log Issue Information
+        run: |
+          echo "Issue processing completed for #${{ github.event.issue.number }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Event Action: ${{ github.event.action }}"
