@@ -3,9 +3,11 @@ name: Issue Handler
 on:
   issues:
     types: [opened]
+
 jobs:
   handle-new-issue:
     runs-on: ubuntu-latest
+
     steps:
       - name: Display Issue Details
         run: |
@@ -24,11 +26,11 @@ jobs:
             echo "Assigned To: Not assigned"
           fi
           
-          if [ "${{ length(github.event.issue.labels) }}" -gt "0" ]; then
-            echo "Labels:"
+          echo "Labels:"
+          if [ '${{ toJson(github.event.issue.labels) }}' != '[]' ]; then
             echo '${{ toJson(github.event.issue.labels) }}' | jq -r '.[].name'
           else
-            echo "Labels: None"
+            echo "None"
           fi
 
       - name: Log Issue Information
